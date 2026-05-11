@@ -1,0 +1,243 @@
+﻿<Window x:Class="FuckingBilibili.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FuckingBilibili"
+        xmlns:converters="clr-namespace:FuckingBilibili.Converters"
+        mc:Ignorable="d"
+        Title="原神服务器切换工具" 
+        Height="520" Width="320"
+        Icon="pm.ico"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize">
+    
+    <Window.Resources>
+        <converters:ServerTypeToStringConverter x:Key="ServerTypeToStringConverter"/>
+        <converters:StringNotEmptyToBoolConverter x:Key="StringNotEmptyToBoolConverter"/>
+        
+        <!-- 淡入动画 -->
+        <Storyboard x:Key="WindowLoadAnimation">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+    </Window.Resources>
+    
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard Storyboard="{StaticResource WindowLoadAnimation}"/>
+        </EventTrigger>
+    </Window.Triggers>
+    
+    <Border Background="{StaticResource BackgroundColor}" 
+            CornerRadius="16"
+            BorderThickness="1"
+            BorderBrush="{StaticResource PrimaryLight}"
+            MouseLeftButtonDown="Border_MouseLeftButtonDown">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="32"/>     <!-- 标题栏 -->
+                <RowDefinition Height="Auto"/>   <!-- Logo区 -->
+                <RowDefinition Height="Auto"/>   <!-- 路径区 -->
+                <RowDefinition Height="Auto"/>   <!-- 当前服务器 -->
+                <RowDefinition Height="*"/>      <!-- 主要内容 -->
+                <RowDefinition Height="Auto"/>   <!-- 底部 -->
+            </Grid.RowDefinitions>
+            
+            <!-- 标题栏 -->
+            <Grid Grid.Row="0">
+                <TextBlock Text="原神服务器切换工具" 
+                          Foreground="{StaticResource TextSecondary}"
+                          FontSize="11"
+                          VerticalAlignment="Center"
+                          Margin="16,0"/>
+                <StackPanel Orientation="Horizontal" 
+                           HorizontalAlignment="Right"
+                           Margin="0,0,8,0">
+                    <Button x:Name="BtnMinimize" 
+                           Content="─" 
+                           Style="{StaticResource TitleButtonStyle}"
+                           Click="BtnMinimize_Click"/>
+                    <Button x:Name="BtnClose" 
+                           Content="✕" 
+                           Style="{StaticResource TitleButtonStyle}"
+                           Margin="4,0,0,0"
+                           Click="BtnClose_Click"/>
+                </StackPanel>
+            </Grid>
+            
+            <!-- Logo区 - 优化丝滑显示 -->
+            <StackPanel Grid.Row="1" Margin="0,12,0,10">
+                <Border Width="64" Height="64"
+                       CornerRadius="18"
+                       HorizontalAlignment="Center"
+                       BorderThickness="2"
+                       BorderBrush="White"
+                       Effect="{StaticResource CardShadow}">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Offset="0" Color="#FFFFFF"/>
+                            <GradientStop Offset="1" Color="#BBDEFB"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid ClipToBounds="True">
+                        <Image Source="pm.ico" 
+                               Width="48" Height="48"
+                               Stretch="Uniform"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               RenderOptions.BitmapScalingMode="HighQuality"
+                               RenderOptions.EdgeMode="Unspecified"
+                               SnapsToDevicePixels="True"/>
+                    </Grid>
+                </Border>
+                <TextBlock Text="FuckingBilibili" 
+                          Foreground="{StaticResource TextSecondary}"
+                          FontSize="10"
+                          HorizontalAlignment="Center"
+                          Margin="0,8,0,0"
+                          Opacity="0.8"/>
+            </StackPanel>
+            
+            <!-- 路径区 -->
+            <StackPanel Grid.Row="2" Margin="16,6">
+                <TextBlock Text="游戏目录" 
+                          Foreground="{StaticResource TextSecondary}"
+                          FontSize="10"
+                          Margin="4,0,0,4"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="TxtGamePath" 
+                            Style="{StaticResource ModernTextBoxStyle}"
+                            IsReadOnly="True"
+                            Text="{Binding GamePath}"
+                            Grid.Column="0"/>
+                    <Button x:Name="BtnBrowse" 
+                           Content="浏览" 
+                           Style="{StaticResource SmallButtonStyle}"
+                           Grid.Column="1"
+                           Margin="8,0,0,0"
+                           Click="BtnBrowse_Click"/>
+                </Grid>
+                <TextBlock x:Name="TxtStatus" 
+                          Text="正在检测游戏目录..." 
+                          Foreground="{StaticResource PrimaryColor}"
+                          FontSize="9"
+                          Margin="4,4,0,0"
+                          Opacity="0.8"/>
+            </StackPanel>
+            
+            <!-- 当前服务器显示 -->
+            <Border Grid.Row="3" 
+                   Margin="16,6"
+                   Padding="16,10"
+                   CornerRadius="12"
+                   Effect="{StaticResource CardShadow}"
+                   BorderBrush="White"
+                   BorderThickness="1">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Offset="0" Color="White"/>
+                        <GradientStop Offset="1" Color="#F5F5F5"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <StackPanel>
+                    <TextBlock Text="当前服务器" 
+                              Foreground="{StaticResource TextSecondary}"
+                              FontSize="10"
+                              HorizontalAlignment="Center"/>
+                    <TextBlock x:Name="TxtCurrentServer" 
+                              Text="{Binding CurrentServer, Converter={StaticResource ServerTypeToStringConverter}}"
+                              Foreground="{StaticResource PrimaryColor}"
+                              FontSize="20"
+                              FontWeight="Bold"
+                              HorizontalAlignment="Center"
+                              Margin="0,2,0,0"/>
+                </StackPanel>
+            </Border>
+            
+            <!-- 主要内容区 -->
+            <StackPanel Grid.Row="4" Margin="16,6">
+                <!-- 服务器选择 -->
+                <TextBlock Text="切换服务器" 
+                          Foreground="{StaticResource TextSecondary}"
+                          FontSize="10"
+                          Margin="4,0,0,6"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="BtnOfficial" 
+                           Content="官服" 
+                           Style="{StaticResource ServerButtonStyle}"
+                           Grid.Column="0"
+                           Margin="0,0,6,0"
+                           Click="BtnOfficial_Click"/>
+                    <Button x:Name="BtnBilibili" 
+                           Content="B服" 
+                           Style="{StaticResource ServerButtonStyle}"
+                           Grid.Column="1"
+                           Margin="6,0,0,0"
+                           Click="BtnBilibili_Click"/>
+                </Grid>
+                
+                <!-- 启动游戏按钮 -->
+                <Button x:Name="BtnLaunch" 
+                       Content="🚀 启动游戏" 
+                       Style="{StaticResource RoundedButtonStyle}"
+                       Margin="0,16,0,0"
+                       Height="40"
+                       FontSize="13"
+                       Click="BtnLaunch_Click"
+                       IsEnabled="{Binding GamePath, Converter={StaticResource StringNotEmptyToBoolConverter}}"/>
+                
+                <!-- 备份恢复区 -->
+                <TextBlock Text="配置管理" 
+                          Foreground="{StaticResource TextSecondary}"
+                          FontSize="10"
+                          Margin="4,16,0,6"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="BtnBackup" 
+                           Content="📥 备份" 
+                           Style="{StaticResource SmallButtonStyle}"
+                           Grid.Column="0"
+                           Margin="0,0,6,0"
+                           Height="32"
+                           FontSize="11"
+                           Click="BtnBackup_Click"/>
+                    <Button x:Name="BtnRestore" 
+                           Content="📤 恢复" 
+                           Style="{StaticResource SmallButtonStyle}"
+                           Grid.Column="1"
+                           Margin="6,0,0,0"
+                           Height="32"
+                           FontSize="11"
+                           Click="BtnRestore_Click"/>
+                </Grid>
+            </StackPanel>
+            
+            <!-- 底部版权 -->
+            <TextBlock Grid.Row="5" 
+                      Text="Made with 💙 for Travelers" 
+                      Foreground="{StaticResource TextSecondary}"
+                      FontSize="9"
+                      HorizontalAlignment="Center"
+                      Margin="0,8,0,12"
+                      Opacity="0.7"/>
+        </Grid>
+    </Border>
+</Window>
