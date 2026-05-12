@@ -5,18 +5,10 @@ using FuckingBilibili.Models;
 
 namespace FuckingBilibili.Services
 {
-    /// <summary>
-    /// 配置读写服务
-    /// </summary>
     public class ConfigService
     {
         private const string ConfigFileName = "config.ini";
 
-        /// <summary>
-        /// 读取游戏配置文件
-        /// </summary>
-        /// <param name="gamePath">游戏目录路径</param>
-        /// <returns>配置模型</returns>
         public ConfigModel? ReadConfig(string gamePath)
         {
             try
@@ -65,11 +57,6 @@ namespace FuckingBilibili.Services
             }
         }
 
-        /// <summary>
-        /// 写入配置文件（切换服务器）
-        /// </summary>
-        /// <param name="gamePath">游戏目录路径</param>
-        /// <param name="serverType">目标服务器类型</param>
         public void WriteConfig(string gamePath, ServerType serverType)
         {
             try
@@ -78,20 +65,16 @@ namespace FuckingBilibili.Services
                 if (!File.Exists(configPath))
                     throw new FileNotFoundException("配置文件不存在");
 
-                // 读取现有内容
                 var lines = File.ReadAllLines(configPath).ToList();
 
-                // 根据服务器类型设置值
                 int subChannel = serverType == ServerType.Bilibili ? 0 : 1;
                 string gameBiz = serverType == ServerType.Bilibili ? "hk4e_bilibili" : "hk4e_cn";
                 int channel = serverType == ServerType.Bilibili ? 14 : 1;
 
-                // 更新或添加配置项
                 UpdateOrAddConfigLine(lines, "sub_channel", subChannel.ToString());
                 UpdateOrAddConfigLine(lines, "game_biz", gameBiz);
                 UpdateOrAddConfigLine(lines, "channel", channel.ToString());
 
-                // 写回文件
                 File.WriteAllLines(configPath, lines);
             }
             catch (Exception ex)
@@ -100,9 +83,6 @@ namespace FuckingBilibili.Services
             }
         }
 
-        /// <summary>
-        /// 更新或添加配置行
-        /// </summary>
         private void UpdateOrAddConfigLine(System.Collections.Generic.List<string> lines, string key, string value)
         {
             bool found = false;

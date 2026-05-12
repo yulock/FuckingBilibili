@@ -5,9 +5,6 @@ using FuckingBilibili.Models;
 
 namespace FuckingBilibili.Converters
 {
-    /// <summary>
-    /// 服务器类型转布尔值（用于单选按钮）
-    /// </summary>
     public class ServerTypeToBoolConverter : IValueConverter
     {
         public ServerType TargetType { get; set; } = ServerType.Official;
@@ -31,9 +28,6 @@ namespace FuckingBilibili.Converters
         }
     }
 
-    /// <summary>
-    /// 服务器类型转显示文字
-    /// </summary>
     public class ServerTypeToStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -51,9 +45,6 @@ namespace FuckingBilibili.Converters
         }
     }
 
-    /// <summary>
-    /// 布尔值反转
-    /// </summary>
     public class InverseBoolConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -75,9 +66,6 @@ namespace FuckingBilibili.Converters
         }
     }
 
-    /// <summary>
-    /// 字符串非空转布尔值
-    /// </summary>
     public class StringNotEmptyToBoolConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

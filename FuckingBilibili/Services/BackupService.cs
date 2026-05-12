@@ -5,17 +5,11 @@ using System.Linq;
 
 namespace FuckingBilibili.Services
 {
-    /// <summary>
-    /// 备份恢复服务
-    /// </summary>
     public class BackupService
     {
         private const string BackupFolderName = "ConfigBackups";
         private const string ConfigFileName = "config.ini";
 
-        /// <summary>
-        /// 获取备份目录路径
-        /// </summary>
         private string GetBackupDirectory(string gamePath)
         {
             string backupDir = Path.Combine(gamePath, BackupFolderName);
@@ -24,11 +18,6 @@ namespace FuckingBilibili.Services
             return backupDir;
         }
 
-        /// <summary>
-        /// 创建配置文件备份
-        /// </summary>
-        /// <param name="gamePath">游戏目录路径</param>
-        /// <returns>备份文件名</returns>
         public string CreateBackup(string gamePath)
         {
             try
@@ -52,9 +41,6 @@ namespace FuckingBilibili.Services
             }
         }
 
-        /// <summary>
-        /// 获取所有备份文件列表
-        /// </summary>
         public List<BackupInfo> GetBackupList(string gamePath)
         {
             var backups = new List<BackupInfo>();
@@ -81,9 +67,6 @@ namespace FuckingBilibili.Services
             return backups;
         }
 
-        /// <summary>
-        /// 恢复指定备份
-        /// </summary>
         public void RestoreBackup(string gamePath, string backupFileName)
         {
             try
@@ -96,7 +79,6 @@ namespace FuckingBilibili.Services
 
                 string configPath = Path.Combine(gamePath, ConfigFileName);
 
-                // 先备份当前配置
                 string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 string currentBackup = Path.Combine(backupDir, $"config_auto_{timestamp}.ini");
                 if (File.Exists(configPath))
@@ -104,7 +86,6 @@ namespace FuckingBilibili.Services
                     File.Copy(configPath, currentBackup, true);
                 }
 
-                // 恢复备份
                 File.Copy(backupPath, configPath, true);
             }
             catch (Exception ex)
@@ -113,9 +94,6 @@ namespace FuckingBilibili.Services
             }
         }
 
-        /// <summary>
-        /// 删除备份文件
-        /// </summary>
         public void DeleteBackup(string gamePath, string backupFileName)
         {
             try
@@ -132,9 +110,6 @@ namespace FuckingBilibili.Services
             }
         }
 
-        /// <summary>
-        /// 从备份文件名或配置文件中获取服务器类型
-        /// </summary>
         private string GetCurrentServerType(string gamePath)
         {
             try
@@ -168,9 +143,6 @@ namespace FuckingBilibili.Services
         }
     }
 
-    /// <summary>
-    /// 备份信息
-    /// </summary>
     public class BackupInfo
     {
         public string FileName { get; set; } = string.Empty;

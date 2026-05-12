@@ -4,19 +4,11 @@ using System.IO;
 
 namespace FuckingBilibili.Services
 {
-    /// <summary>
-    /// 游戏启动服务
-    /// </summary>
     public class GameLauncherService
     {
         private const string GameExeName = "YuanShen.exe";
         private const string LauncherExeName = "launcher.exe";
 
-        /// <summary>
-        /// 启动游戏
-        /// </summary>
-        /// <param name="gamePath">游戏目录路径</param>
-        /// <returns>是否启动成功</returns>
         public bool LaunchGame(string gamePath)
         {
             try
@@ -30,7 +22,7 @@ namespace FuckingBilibili.Services
                     FileName = exePath,
                     WorkingDirectory = gamePath,
                     UseShellExecute = true,
-                    Verb = "runas" // 以管理员权限运行（某些情况下需要）
+                    Verb = "runas"
                 };
 
                 Process.Start(processInfo);
@@ -42,18 +34,12 @@ namespace FuckingBilibili.Services
             }
         }
 
-        /// <summary>
-        /// 检查游戏是否正在运行
-        /// </summary>
         public bool IsGameRunning()
         {
             var processes = Process.GetProcessesByName("YuanShen");
             return processes.Length > 0;
         }
 
-        /// <summary>
-        /// 获取游戏进程
-        /// </summary>
         public Process? GetGameProcess()
         {
             var processes = Process.GetProcessesByName("YuanShen");

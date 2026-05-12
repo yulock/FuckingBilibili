@@ -10,19 +10,13 @@ using FuckingBilibili.Services;
 
 namespace FuckingBilibili
 {
-    /// <summary>
-    /// 主窗口
-    /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        #region 服务实例
         private readonly GamePathService _gamePathService;
         private readonly ConfigService _configService;
         private readonly BackupService _backupService;
         private readonly GameLauncherService _launcherService;
-        #endregion
 
-        #region 属性
         private string _gamePath = string.Empty;
         private ServerType _currentServer;
         private bool _isLoading;
@@ -56,29 +50,24 @@ namespace FuckingBilibili
                 OnPropertyChanged();
             }
         }
-        #endregion
 
-        #region INotifyPropertyChanged
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        #endregion
 
         public MainWindow()
         {
             InitializeComponent();
             DataContext = this;
 
-            // 初始化服务
             _gamePathService = new GamePathService();
             _configService = new ConfigService();
             _backupService = new BackupService();
             _launcherService = new GameLauncherService();
 
-            // 自动检测游戏路径
             Loaded += MainWindow_Loaded;
         }
 
@@ -108,9 +97,6 @@ namespace FuckingBilibili
             });
         }
 
-        /// <summary>
-        /// 刷新当前服务器显示
-        /// </summary>
         private void RefreshCurrentServer()
         {
             try
@@ -131,7 +117,7 @@ namespace FuckingBilibili
             }
         }
 
-        #region 窗口控制
+
         private void Border_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
@@ -149,9 +135,7 @@ namespace FuckingBilibili
         {
             Close();
         }
-        #endregion
 
-        #region 路径选择
         private void BtnBrowse_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFolderDialog
@@ -164,7 +148,6 @@ namespace FuckingBilibili
             {
                 string selectedPath = dialog.FolderName;
 
-                // 如果选择的是父目录，自动找到 Genshin Impact Game 子目录
                 string gamePath = Path.Combine(selectedPath, "Genshin Impact Game");
                 if (Directory.Exists(gamePath))
                 {
@@ -185,9 +168,7 @@ namespace FuckingBilibili
                 }
             }
         }
-        #endregion
 
-        #region 服务器切换
         private void BtnOfficial_Click(object sender, RoutedEventArgs e)
         {
             SwitchServer(ServerType.Official);
@@ -214,10 +195,7 @@ namespace FuckingBilibili
 
             try
             {
-                // 先自动备份
                 _backupService.CreateBackup(GamePath);
-
-                // 切换服务器
                 _configService.WriteConfig(GamePath, targetServer);
                 CurrentServer = targetServer;
 
@@ -239,9 +217,7 @@ namespace FuckingBilibili
         {
             return server == ServerType.Official ? "官服" : "B服";
         }
-        #endregion
 
-        #region 启动游戏
         private void BtnLaunch_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(GamePath))
@@ -271,9 +247,7 @@ namespace FuckingBilibili
                 MessageBox.Show($"启动游戏失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        #endregion
 
-        #region 备份恢复
         private void BtnBackup_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(GamePath))
@@ -313,7 +287,7 @@ namespace FuckingBilibili
                 return;
             }
 
-            // 创建恢复窗口
+
             var restoreWindow = new Window
             {
                 Title = "选择要恢复的备份",
@@ -371,6 +345,5 @@ namespace FuckingBilibili
             restoreWindow.Content = stackPanel;
             restoreWindow.ShowDialog();
         }
-        #endregion
     }
 }
