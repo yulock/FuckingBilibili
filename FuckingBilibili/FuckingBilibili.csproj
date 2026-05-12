@@ -9,6 +9,8 @@
     <ApplicationIcon>pm.ico</ApplicationIcon>
     <AssemblyName>FuckingBilibili</AssemblyName>
     <RootNamespace>FuckingBilibili</RootNamespace>
+	<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+	<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
   </PropertyGroup>
 
   <ItemGroup>
